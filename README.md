@@ -39,6 +39,31 @@ Given the substantial size of the dataset (**16M+ rows**), **PySpark** was judic
 
 ## Implementation Details
 
+### Environment Setup
+
+Install the single runtime dependency before opening the notebook:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Use Java 17 or another Spark-supported LTS release. For this development container, set `JAVA_HOME` to the installed Java 17 runtime before launching Jupyter:
+
+```bash
+export JAVA_HOME=/usr/local/sdkman/candidates/java/17.0.20+1-ms
+export PATH="$JAVA_HOME/bin:$PATH"
+```
+
+The notebook expects these files under `data/`:
+
+- `dim_Date.csv`
+- `dim_Organisation`
+- `dim_Student`
+- `dim_StudentExtended`
+- `fact_AttendanceSession`
+
+The four dimension datasets can be recovered from the project's historical git commit. Because the original 16M+ row attendance fact dataset was never present in this repository or its upstream remote, this workspace includes a small schema-compatible development fixture under `data/fact_AttendanceSession`. Replace that fixture with the authoritative attendance dataset before using the results for analysis.
+
 ### **PySpark Session Initialisation**
 ```python
 from pyspark.sql import SparkSession
@@ -79,7 +104,7 @@ df_summary = df_combined.groupBy("organisationkey", "Year_Group", "ISOWeekNumber
 
 ### **Efficient Data Storage and Retrieval Mechanisms**
 ```python
-df_summary.write.mode("overwrite").parquet("data/fact_AttendanceSummary.parquet")
+df_summary.write.mode("overwrite").parquet("data/fact_AttendanceSummary")
 ```
 
 ## **Key Insights and Considerations**
